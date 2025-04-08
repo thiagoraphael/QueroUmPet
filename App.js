@@ -11,9 +11,8 @@ export default function App() {
   const [request, response, promptAsync] = Google.useAuthRequest({
     expoClientId: '',
     webClientId:  '',
-    iosClientId:  '',
     androidClientId: '',
-  });
+  });
 
   useEffect(() => {
     if (response?.type === 'success') {
