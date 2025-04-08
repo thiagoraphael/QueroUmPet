@@ -1,11 +1,37 @@
-# Sample Snack app
+# Quero um Pet 🐾
 
-Open the `App.js` file to start writing some code. You can preview the changes directly on your phone or tablet by scanning the **QR code** or use the iOS or Android emulators. When you're done, click **Save** and share the link!
+Aplicativo mobile desenvolvido com React Native + Expo que permite aos usuários realizar login com sua conta Google, garantindo uma autenticação segura, rápida e moderna. Este projeto faz parte de um estudo de implementação de autenticação OAuth2 no ambiente mobile.
 
-When you're ready to see everything that Expo provides (or if you want to use your own editor) you can **Download** your project and use it with [expo cli](https://docs.expo.dev/get-started/installation/#expo-cli)).
+## 📱 Funcionalidades
 
-All projects created in Snack are publicly available, so you can easily share the link to this project via link, or embed it on a web page with the `<>` button.
+- Tela de login com identidade visual personalizada
+- Autenticação com conta Google (OAuth2)
+- Exibição dos dados do usuário após o login (nome, e-mail e foto)
+- Interface responsiva com foco em simplicidade e usabilidade
 
-If you're having problems, you can tweet to us [@expo](https://twitter.com/expo) or ask in our [forums](https://forums.expo.dev/c/expo-dev-tools/61) or [Discord](https://chat.expo.dev/).
+## 🛠 Tecnologias
 
-Snack is Open Source. You can find the code on the [GitHub repo](https://github.com/expo/snack).
+- [React Native](https://reactnative.dev/)
+- [Expo](https://expo.dev/)
+- [Expo Auth Session](https://docs.expo.dev/versions/latest/sdk/auth-session/)
+- [Google Identity Platform](https://console.cloud.google.com/)
+
+## 🎨 Paleta de Cores
+
+| Cor        | Hex       |
+|------------|-----------|
+| Preto      | `#1C1C1C` |
+| Vermelho   | `#FB3B2E` |
+| Amarelo    | `#FCC535` |
+| Branco     | `#FFFFFF` |
+
+## 🧠 Justificativa Técnica
+
+A escolha do Expo se deu pela agilidade na prototipação de interfaces mobile e a integração facilitada com serviços de autenticação. O login via Google foi adotado por oferecer uma solução segura e com excelente usabilidade, aproveitando a familiaridade do usuário com sua conta Google.
+
+## ⚙️ Instalação e Execução
+
+1. Clone este repositório:
+   ```bash
+   git clone https://github.com/seu-usuario/quero-um-pet.git
+   cd quero-um-pet
