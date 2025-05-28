@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "773991145084",
+    "project_id": "quero-um-pet-c48d8",
+    "storage_bucket": "quero-um-pet-c48d8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:773991145084:android:3eb7e49c208390b133f3f9",
+        "android_client_info": {
+          "package_name": "Quero.Um.Pet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "773991145084-dbic53552d37a2en079bttcesb115tso.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBg3m18GPJkbKQVaHKTqZ40HD9JsmL_uMQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "773991145084-dbic53552d37a2en079bttcesb115tso.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
