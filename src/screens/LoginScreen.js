@@ -40,7 +40,7 @@ export default function LoginScreen() {
   const loginEmail = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, senha);
-      navigation.replace("Home");
+      navigation.replace("AppTabs");
     } catch (error) {
       let mensagem = "Erro desconhecido.";
       if (error.code === "auth/invalid-email") mensagem = "Email inválido.";
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 16,
-    color: '#D9D9D9',
+    color: '#F3F3F3',
     fontWeight: 'bold',
   },
 });
