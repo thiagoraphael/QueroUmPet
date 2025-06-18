@@ -31,7 +31,7 @@ export default function AdocoesScreen({ navigation }) {
         <Text style={styles.botaoTexto}>Listar PETs Adotados</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.botao} onPress={() => navigation.navigate('CadastroAdotante')}>
+      <TouchableOpacity style={styles.botao} onPress={() => navigation.navigate('ListaAnimais')}>
         <Text style={styles.botaoTexto}>Cadastrar Adotante</Text>
       </TouchableOpacity>
 
