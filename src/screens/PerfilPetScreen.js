@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } from 'react-native';
-import { getAnimais, deleteAnimal } from '../services/animaisStorage';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, ScrollView } from 'react-native';
+import { getAnimais, updateAnimal, deleteAnimal } from '../services/animaisStorage';
+import { useFonts as useBarriecito, Barriecito_400Regular } from '@expo-google-fonts/barriecito';
 import { useFonts as useGeorama, Georama_400Regular } from '@expo-google-fonts/georama';
-import AppLoading from 'expo-app-loading';
+import * as ImagePicker from 'expo-image-picker';
+
 
 export default function PerfilPetScreen({ route, navigation }) {
   const { id } = route.params;
   const [pet, setPet] = useState(null);
+
+  const [barriecitoLoaded] = useBarriecito({ Barriecito_400Regular });
   const [georamaLoaded] = useGeorama({ Georama_400Regular });
 
   useEffect(() => {
@@ -15,86 +19,123 @@ export default function PerfilPetScreen({ route, navigation }) {
 
   const carregarPet = async () => {
     const animais = await getAnimais();
-    const encontrado = animais.find(a => a.id === id);
-    setPet(encontrado);
+    const animalSelecionado = animais.find(a => a.id === id);
+    setPet(animalSelecionado);
   };
 
-  const excluirPet = () => {
-    Alert.alert('Excluir Animal', 'Tem certeza que deseja excluir este animal?', [
+  const escolherNovaFoto = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setPet({ ...pet, foto: result.assets[0].uri });
+    }
+  };
+
+  const salvarAlteracoes = async () => {
+    if (pet) {
+      await updateAnimal(pet.id, pet);
+      Alert.alert('Sucesso', 'Dados atualizados!');
+      navigation.goBack();
+    }
+  };
+
+  const excluirPet = async () => {
+    Alert.alert('Confirmar', 'Tem certeza que deseja excluir este PET?', [
       { text: 'Cancelar' },
       {
-        text: 'Excluir',
-        onPress: async () => {
-          await deleteAnimal(id);
-          Alert.alert('Sucesso', 'Animal excluído!');
+        text: 'Excluir', style: 'destructive', onPress: async () => {
+          await deleteAnimal(pet.id);
+          Alert.alert('Excluído', 'PET removido.');
           navigation.goBack();
-        },
-        style: 'destructive'
-      },
+        }
+      }
     ]);
   };
 
-  if (!georamaLoaded) return <AppLoading />;
-  if (!pet) return <Text>Carregando...</Text>;
+  if (!barriecitoLoaded || !georamaLoaded || !pet) return null;
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ alignItems: 'center' }}>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.titulo}>Perfil do PET</Text>
+
       {pet.foto ? (
         <Image source={{ uri: pet.foto }} style={styles.foto} />
       ) : (
-        <View style={styles.fotoPlaceholder}>
-          <Text style={styles.texto}>Sem Foto</Text>
+        <View style={[styles.foto, { backgroundColor: '#ccc', justifyContent: 'center', alignItems: 'center' }]}>
+          <Text style={{ color: '#666' }}>Sem Foto</Text>
         </View>
       )}
+      <TouchableOpacity style={styles.botaoFoto} onPress={escolherNovaFoto}>
+        <Text style={styles.botaoTexto}>Alterar Foto</Text>
+      </TouchableOpacity>
 
-      <Text style={styles.nome}>{pet.nome}</Text>
+      <TextInput style={styles.input} placeholder="Nome" value={pet.nome} onChangeText={text => setPet({ ...pet, nome: text })} />
+      <TextInput style={styles.input} placeholder="Raça" value={pet.raca} onChangeText={text => setPet({ ...pet, raca: text })} />
+      <TextInput style={styles.input} placeholder="Idade" value={pet.idade} onChangeText={text => setPet({ ...pet, idade: text })} />
+      <TextInput style={styles.input} placeholder="Cor" value={pet.cor} onChangeText={text => setPet({ ...pet, cor: text })} />
+      <TextInput style={styles.input} placeholder="Observações" value={pet.observacoes} onChangeText={text => setPet({ ...pet, observacoes: text })} />
 
-      <Text style={styles.texto}>Raça: {pet.raca}</Text>
-      <Text style={styles.texto}>Idade: {pet.idade} anos</Text>
-      <Text style={styles.texto}>Cor: {pet.cor}</Text>
-      <Text style={styles.texto}>Observações: {pet.observacoes || 'Nenhuma'}</Text>
+      <TextInput style={styles.input} placeholder="Status (Disponível ou Adotado)" value={pet.status} onChangeText={text => setPet({ ...pet, status: text })} />
 
-      {pet.adotante && (
+      {pet.status === 'Adotado' && (
         <>
-          <Text style={styles.subtitulo}>Adotante:</Text>
-          <Text style={styles.texto}>Nome: {pet.adotante.nome}</Text>
-          <Text style={styles.texto}>Contato: {pet.adotante.contato}</Text>
-          <Text style={styles.texto}>Data de Adoção: {pet.dataAdocao}</Text>
+          <TextInput style={styles.input} placeholder="Nome do Adotante" value={pet.adotante || ''} onChangeText={text => setPet({ ...pet, adotante: text })} />
+          <TextInput style={styles.input} placeholder="Contato do Adotante" value={pet.contatoAdotante || ''} onChangeText={text => setPet({ ...pet, contatoAdotante: text })} />
+          <TextInput style={styles.input} placeholder="Data da Adoção" value={pet.dataAdocao || ''} onChangeText={text => setPet({ ...pet, dataAdocao: text })} />
         </>
       )}
 
-      {/* Botões de ação */}
-      <View style={styles.botoes}>
-        <TouchableOpacity style={styles.botaoEditar} onPress={() => navigation.navigate('EditarPet', { id: pet.id })}>
-          <Text style={styles.botaoTexto}>Editar</Text>
-        </TouchableOpacity>
+      <TouchableOpacity style={styles.botaoSalvar} onPress={salvarAlteracoes}>
+        <Text style={styles.botaoTexto}>Salvar Alterações</Text>
+      </TouchableOpacity>
 
-        <TouchableOpacity style={styles.botaoExcluir} onPress={excluirPet}>
-          <Text style={styles.botaoTexto}>Excluir</Text>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity style={styles.botaoExcluir} onPress={excluirPet}>
+        <Text style={styles.botaoTexto}>Excluir PET</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  foto: { width: 120, height: 120, borderRadius: 60, marginBottom: 10 },
-  fotoPlaceholder: {
-    width: 120, height: 120, borderRadius: 60, backgroundColor: '#ccc',
-    justifyContent: 'center', alignItems: 'center', marginBottom: 10,
+  container: { padding: 20, backgroundColor: '#fff' },
+  titulo: { fontFamily: 'Barriecito_400Regular', fontSize: 26, color: '#0578F9', marginBottom: 10, textAlign: 'center' },
+  foto: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    alignSelf: 'center',
+    marginBottom: 10,
   },
-  nome: { fontSize: 24, fontWeight: 'bold', marginBottom: 10 },
-  texto: { fontFamily: 'Georama_400Regular', fontSize: 16, marginBottom: 5 },
-  subtitulo: { fontSize: 18, fontWeight: 'bold', marginTop: 10, marginBottom: 5 },
-  botoes: { flexDirection: 'row', marginTop: 20 },
-  botaoEditar: {
-    backgroundColor: '#0578F9', padding: 12, borderRadius: 8,
-    marginRight: 10, flex: 1, alignItems: 'center'
+    botaoFoto: {
+    backgroundColor: '#009C53',
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+
+  input: {
+    borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
+    paddingHorizontal: 10, paddingVertical: 8, marginBottom: 10,
+    fontFamily: 'Georama_400Regular', fontSize: 16
+  },
+  botaoSalvar: {
+    backgroundColor: '#0578F9',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 10
   },
   botaoExcluir: {
-    backgroundColor: '#dc3545', padding: 12, borderRadius: 8,
-    flex: 1, alignItems: 'center'
+    backgroundColor: '#c62828',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 10
   },
   botaoTexto: { color: '#fff', fontWeight: 'bold' },
 });

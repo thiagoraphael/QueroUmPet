@@ -39,9 +39,6 @@ export default function FinancasScreen({ navigation }) {
         <Text style={styles.botaoTexto}>Adicionar Saída</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.botao} onPress={() => navigation.navigate('HistoricoFinancas')}>
-        <Text style={styles.botaoTexto}>Ver Histórico</Text>
-      </TouchableOpacity>
 
       <Text style={styles.subtitulo}>Últimas Movimentações:</Text>
       <FlatList

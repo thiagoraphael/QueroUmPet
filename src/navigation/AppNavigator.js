@@ -10,7 +10,10 @@ import FinancasScreen from "../screens/FinancasScreen";
 import AdocoesScreen from "../screens/AdocoesScreen";
 import CadastroAnimalScreen from "../screens/CadastroAnimalScreen";
 import ListaAnimaisScreen from "../screens/ListaAnimaisScreen";
-
+import NovaSaidaScreen from "../screens/NovaSaidaScreen"
+import NovaEntradaScreen from "../screens/NovaEntradaScreen"
+import ListaAdotadosScreen from "../screens/ListaAdotadosScreen";
+import PerfilPetScreen from "../screens/PerfilPetScreen";
 
 import { auth } from "../services/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
@@ -44,6 +47,8 @@ function AppTabs() {
           );
         },
         headerShown: false,
+         tabBarActiveTintColor: '#FFFFFF',
+        tabBarInactiveTintColor: '#D9D9D9',
         tabBarStyle: {
           position: 'absolute',
           bottom: 20,
@@ -96,7 +101,11 @@ export default function AppNavigator() {
             <Stack.Screen name="AppTabs" component={AppTabs} />
             <Stack.Screen name="CadastroAnimal" component={CadastroAnimalScreen} />
             <Stack.Screen name="ListaAnimais" component={ListaAnimaisScreen} />
-            {/* Aqui você vai adicionando futuras telas: Ex: PerfilPet, NovaEntrada, etc */}
+            <Stack.Screen name="NovaEntrada" component={NovaEntradaScreen} />
+            <Stack.Screen name="NovaSaida" component={NovaSaidaScreen} />
+            <Stack.Screen name="ListaAdotados" component={ListaAdotadosScreen} />
+            <Stack.Screen name="PerfilPet" component={PerfilPetScreen} />
+            
           </>
         ) : (
           <>

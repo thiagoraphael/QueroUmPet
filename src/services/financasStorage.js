@@ -2,32 +2,27 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const STORAGE_KEY = '@financas';
 
-export const getFinancas = async () => {
-  try {
-    const data = await AsyncStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch (error) {
-    console.log('Erro ao buscar finanças:', error);
-    return [];
-  }
-};
+export async function getFinancas() {
+  const json = await AsyncStorage.getItem(STORAGE_KEY);
+  return json ? JSON.parse(json) : [];
+}
 
-export const saveMovimentacao = async (movimentacao) => {
-  try {
-    const financas = await getFinancas();
-    const novaMov = { ...movimentacao, id: Date.now() };
-    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify([...financas, novaMov]));
-  } catch (error) {
-    console.log('Erro ao salvar movimentação:', error);
-  }
-};
+export async function saveEntrada(novaEntrada) {
+  const financas = await getFinancas();
+  const id = Date.now();
+  const entrada = { id, tipo: 'Entrada', ...novaEntrada };
+  await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify([...financas, entrada]));
+}
 
-export const deleteMovimentacao = async (id) => {
-  try {
-    const financas = await getFinancas();
-    const filtradas = financas.filter((item) => item.id !== id);
-    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(filtradas));
-  } catch (error) {
-    console.log('Erro ao deletar movimentação:', error);
-  }
-};
+export async function saveSaida(novaSaida) {
+  const financas = await getFinancas();
+  const id = Date.now();
+  const saida = { id, tipo: 'Saída', ...novaSaida };
+  await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify([...financas, saida]));
+}
+
+export async function deleteMovimentacao(id) {
+  const financas = await getFinancas();
+  const filtradas = financas.filter(f => f.id !== id);
+  await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(filtradas));
+}
