@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList, Image } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { getAnimais } from "../services/animaisStorage";
 import { getFinancas } from "../services/financasStorage";
 import { useFonts as useBarriecito, Barriecito_400Regular } from '@expo-google-fonts/barriecito';
 import { useFonts as useGeorama, Georama_400Regular } from '@expo-google-fonts/georama';
-
+import { signOut } from "firebase/auth";
+import { auth } from "../services/firebaseConfig";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from "@react-navigation/native";
 
 export default function HomeScreen() {
+  const navigation = useNavigation();  // ✅ Agora no topo!
+
   const [animais, setAnimais] = useState([]);
   const [financas, setFinancas] = useState([]);
 
@@ -24,6 +29,19 @@ export default function HomeScreen() {
     setFinancas(listaFinancas);
   };
 
+  const fazerLogout = async () => {
+    try {
+      await signOut(auth);
+      await AsyncStorage.removeItem('@user');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+    }
+  };
+
   if (!barriecitoLoaded || !georamaLoaded) return null;
 
   const totalAnimais = animais.length;
@@ -38,14 +56,14 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <Text style={styles.titulo}>Quero Um Pet</Text>
 
-      {/* Seção PETs */}
+      {/* PETs */}
       <View style={styles.card}>
         <Text style={styles.cardTitulo}>🐶 PETs</Text>
         <Text style={styles.texto}>Total cadastrados: {totalAnimais}</Text>
         <Text style={styles.texto}>Total adotados: {totalAdotados}</Text>
       </View>
 
-      {/* Seção Financeiro */}
+      {/* Financeiro */}
       <View style={styles.card}>
         <Text style={styles.cardTitulo}>💰 Financeiro</Text>
         <Text style={styles.texto}>Saldo atual: R$ {saldoAtual.toFixed(2)}</Text>
@@ -55,13 +73,13 @@ export default function HomeScreen() {
         ) : (
           ultimasFinancas.map((item) => (
             <Text key={item.id} style={styles.texto}>
-              {item.tipo}: R$ {item.valor.toFixed(2)} - {item.descricao}
+              {item.tipo}: R$ {Number(item.valor).toFixed(2)} - {item.descricao || 'Sem descrição'}
             </Text>
           ))
         )}
       </View>
 
-      {/* Seção Últimos PETs Adotados */}
+      {/* Últimos Adotados */}
       <View style={styles.card}>
         <Text style={styles.cardTitulo}>🏡 Últimos PETs Adotados</Text>
         {ultimosAdotados.length === 0 ? (
@@ -79,12 +97,17 @@ export default function HomeScreen() {
               <View>
                 <Text style={styles.texto}>{item.nome} - {item.raca}</Text>
                 <Text style={styles.texto}>Idade: {item.idade} anos</Text>
-                <Text style={styles.texto}>Adotante: {item.adotante ? item.adotante.nome : 'Não informado'}</Text>
+                <Text style={styles.texto}>Adotante: {item.adotante ? item.adotante : 'Não informado'}</Text>
               </View>
             </View>
           ))
         )}
       </View>
+
+      {/* Botão Sair */}
+      <TouchableOpacity style={styles.botaoSair} onPress={fazerLogout}>
+        <Text style={styles.botaoTexto}>Sair</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -97,6 +120,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 10,
     color: '#0578F9',
+  },
+  botaoSair: {
+    backgroundColor: '#c62828',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  botaoTexto: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
   card: {
     backgroundColor: '#F0F0F0',

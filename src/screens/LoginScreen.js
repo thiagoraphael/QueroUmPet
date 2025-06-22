@@ -15,7 +15,7 @@ export default function LoginScreen() {
   const navigation = useNavigation();
 
   const [request, response, promptAsync] = Google.useAuthRequest({
-    expoClientId: "773991145084-nr4j7k1r9oikbijq2bt1b8u27uvsjvqs.apps.googleusercontent.com",
+    expoClientId: "773991145084-ecne9uuutvlir1j1faj19olfftrvvknu.apps.googleusercontent.com",
     iosClientId: "773991145084-nr4j7k1r9oikbijq2bt1b8u27uvsjvqs.apps.googleusercontent.com",
     androidClientId: "773991145084-q4c32hde7aeabeegkrpjlmob51ud8mba.apps.googleusercontent.com",
     webClientId: "773991145084-nr4j7k1r9oikbijq2bt1b8u27uvsjvqs.apps.googleusercontent.com",
