@@ -21,12 +21,10 @@ const app = initializeApp(firebaseConfig);
 let auth;
 
 try {
-  // Tenta inicializar o auth com persistência
   auth = initializeAuth(app, {
     persistence: getReactNativePersistence(AsyncStorage),
   });
 } catch (e) {
-  // Se já estiver inicializado, apenas recupera
   auth = getAuth(app);
 }
 

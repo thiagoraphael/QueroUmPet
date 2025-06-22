@@ -8,9 +8,11 @@ import { signOut } from "firebase/auth";
 import { auth } from "../services/firebaseConfig";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 export default function HomeScreen() {
-  const navigation = useNavigation();  // ✅ Agora no topo!
+  const navigation = useNavigation();
 
   const [animais, setAnimais] = useState([]);
   const [financas, setFinancas] = useState([]);
@@ -18,9 +20,11 @@ export default function HomeScreen() {
   const [barriecitoLoaded] = useBarriecito({ Barriecito_400Regular });
   const [georamaLoaded] = useGeorama({ Georama_400Regular });
 
-  useEffect(() => {
-    carregarDados();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      carregarDados();
+    }, [])
+  );
 
   const carregarDados = async () => {
     const listaAnimais = await getAnimais();
@@ -47,8 +51,19 @@ export default function HomeScreen() {
   const totalAnimais = animais.length;
   const totalAdotados = animais.filter(a => a.status === "Adotado").length;
   const saldoAtual = financas.reduce((total, item) => {
-    return item.tipo === "Entrada" ? total + Number(item.valor) : total - Number(item.valor);
+    const tipo = item.tipo?.toLowerCase();
+
+    if (tipo === 'doação' || tipo === 'serviço') {
+      return total + Number(item.valor);
+    }
+
+    if (tipo === 'compra' || tipo === 'compra vacina') {
+      return total - Number(item.valor);
+    }
+
+    return total;
   }, 0);
+
   const ultimasFinancas = [...financas].slice(-3).reverse();
   const ultimosAdotados = animais.filter(a => a.status === "Adotado").slice(-3).reverse();
 
@@ -73,7 +88,7 @@ export default function HomeScreen() {
         ) : (
           ultimasFinancas.map((item) => (
             <Text key={item.id} style={styles.texto}>
-              {item.tipo}: R$ {Number(item.valor).toFixed(2)} - {item.descricao || 'Sem descrição'}
+              {item.tipo}: R$ {Number(item.valor).toFixed(2)} - {item.metodo || item.responsavel || item.destinatario || 'Sem info'}
             </Text>
           ))
         )}

@@ -3,15 +3,19 @@ import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity } from 'react
 import { getAnimais } from '../services/animaisStorage';
 import { useFonts as useBarriecito, Barriecito_400Regular } from '@expo-google-fonts/barriecito';
 import { useFonts as useGeorama, Georama_400Regular } from '@expo-google-fonts/georama';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 export default function ListaAdotadosScreen({ navigation }) {
   const [animais, setAnimais] = useState([]);
   const [barriecitoLoaded] = useBarriecito({ Barriecito_400Regular });
   const [georamaLoaded] = useGeorama({ Georama_400Regular });
 
-  useEffect(() => {
-    carregarAnimais();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      carregarAnimais();
+    }, [])
+  );
 
   const carregarAnimais = async () => {
     const data = await getAnimais();

@@ -4,7 +4,6 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useFonts as useBarriecito, Barriecito_400Regular } from '@expo-google-fonts/barriecito';
 import { useFonts as useGeorama, Georama_400Regular } from '@expo-google-fonts/georama';
 
-// Impede a splash screen de desaparecer antes da hora
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
@@ -24,7 +23,7 @@ export default function App() {
   }, [onLayoutRootView]);
 
   if (!isFontsLoaded) {
-    return null;  // Enquanto as fontes carregam, mantém a splash screen
+    return null;
   }
 
   return <AppNavigator />;

@@ -2,15 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { getAnimais } from '../services/animaisStorage';
 import { useFonts as useGeorama, Georama_400Regular } from '@expo-google-fonts/georama';
-
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 export default function ListaAnimaisScreen({ navigation }) {
   const [animais, setAnimais] = useState([]);
   const [georamaLoaded] = useGeorama({ Georama_400Regular });
 
-  useEffect(() => {
-    carregarAnimais();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      carregarAnimais();
+    }, [])
+  );
 
   const carregarAnimais = async () => {
     const data = await getAnimais();

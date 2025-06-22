@@ -1,26 +1,42 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { getFinancas } from '../services/financasStorage';
 import { useFonts as useBarriecito, Barriecito_400Regular } from '@expo-google-fonts/barriecito';
 import { useFonts as useGeorama, Georama_400Regular } from '@expo-google-fonts/georama';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function FinancasScreen({ navigation }) {
   const [financas, setFinancas] = useState([]);
+
   const [barriecitoLoaded] = useBarriecito({ Barriecito_400Regular });
   const [georamaLoaded] = useGeorama({ Georama_400Regular });
-
-  useEffect(() => {
-    carregarFinancas();
-  }, []);
 
   const carregarFinancas = async () => {
     const data = await getFinancas();
     setFinancas(data);
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      carregarFinancas();
+    }, [])
+  );
+
   const saldo = financas.reduce((total, item) => {
-    return item.tipo === 'Entrada' ? total + Number(item.valor) : total - Number(item.valor);
+    const tipo = item.tipo.toLowerCase();
+
+    if (tipo === 'doação' || tipo === 'serviço') {
+      return total + Number(item.valor);
+    }
+
+    if (tipo === 'compra' || tipo === 'compra vacina') {
+      return total - Number(item.valor);
+    }
+
+    return total;
   }, 0);
+
+
 
   if (!barriecitoLoaded || !georamaLoaded) return null;
 
@@ -39,15 +55,14 @@ export default function FinancasScreen({ navigation }) {
         <Text style={styles.botaoTexto}>Adicionar Saída</Text>
       </TouchableOpacity>
 
-
       <Text style={styles.subtitulo}>Últimas Movimentações:</Text>
       <FlatList
         data={ultimas}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.card}>
-            <Text style={styles.texto}>{item.tipo}: R$ {item.valor.toFixed(2)}</Text>
-            <Text style={styles.texto}>Responsável/Destinatário: {item.responsavel || item.destinatario}</Text>
+            <Text style={styles.texto}>{item.tipo}: R$ {Number(item.valor).toFixed(2)}</Text>
+            <Text style={styles.texto}>Responsável/Destinatário: {item.responsavel || item.destinatario || 'N/A'}</Text>
             <Text style={styles.texto}>Método: {item.metodo}</Text>
             <Text style={styles.texto}>Data: {item.data}</Text>
           </View>
